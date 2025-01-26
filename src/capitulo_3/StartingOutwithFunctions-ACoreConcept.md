@@ -265,3 +265,8 @@ fetch("some/remote/url")
 Nota que si hubieras definido las funciones apropiadas `processData(data)` y `processError(error)`, el código podría haberse acortado a `fetch("some/remote/url").then(processData).catch(processError)` siguiendo las líneas que vimos anteriormente.
 
 Finalmente, también deberías considerar usar `async/await`; lee más sobre esto en https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function y https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await.
+
+
+<div align="center">
+  <img src="./01.png" alt="Descripción de la imagen" width="800"/>
+</div>
