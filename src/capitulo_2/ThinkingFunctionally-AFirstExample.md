@@ -42,3 +42,20 @@ Asignar el manejador de eventos directamente en HTML, como lo hice, no es recome
 Esta es una explicación muy básica del problema y de tu página web, pero es suficiente para nuestros propósitos. Ahora, vamos a pensar en formas de evitar los clics repetidos en ese botón. ¿Cómo podemos evitar que el usuario haga clic más de una vez? Ese es un problema interesante, con varias posibles soluciones. ¡Empecemos mirando algunas malas soluciones!
 
 ¿Cuántas formas se te ocurren para resolver nuestro problema? Repasemos varias soluciones y analicemos su calidad.
+
+### Solución 1 – ¡esperando lo mejor!
+
+¿Cómo podemos resolver el problema? La primera solución podría parecer una broma: no hacer nada, decirle al usuario que no haga clic dos veces, ¡y esperar lo mejor! Tu página podría verse algo así:
+
+![Solution One - Hoping for the best!](./img/solutionOne.png)
+
+Esta es una forma de evadir el problema; he visto varios sitios web que simplemente advierten al usuario sobre los riesgos de hacer clic más de una vez (ver Figura 2.1) y en realidad no hacen nada para prevenir la situación: ¿el usuario fue facturado dos veces? ¡Les advertimos... es su culpa!
+
+Tu solución podría verse simplemente así:
+
+```javascript
+<button id="billButton" onclick="billTheUser(some, sales, data)">Facturarme</button>
+<b>ADVERTENCIA: ¡HAGA CLIC SOLO UNA VEZ, NO HAGA CLIC DE NUEVO!!</b>
+```
+
+Bueno, en realidad esto no es una solución; pasemos a propuestas más serias.
