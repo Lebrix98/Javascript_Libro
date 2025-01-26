@@ -257,8 +257,43 @@ console.log(nc()); // 3
 > }
 > ```
 
+# Funciones Flecha (Arrow Functions)
 
+> *Las funciones flecha son simplemente una forma más corta y concisa de crear una función (sin nombre).
+Las funciones flecha se pueden usar casi en cualquier lugar donde se pueda usar una función clásica, 
+excepto que no se pueden usar como constructores.*
 
+La sintaxis es:
+- `(parametro, otroParametro, ...etc) => { declaraciones }`
+- `(parametro, otroParametro, ...etc) => expresion` 
+
+El primer caso te permite escribir tanto código como quieras, y el segundo es la forma corta de `{ return expresion }`.
+
+## Ejemplo de Reescritura Ajax:
+```javascript
+$.get("some/url", data, (result, status) => {
+   // verificar status y hacer algo
+   // con el resultado
+});
+```
+
+# Resumen
+
+En este capítulo, hemos explorado los fundamentos de la Programación Funcional (FP), incluyendo:
+
+- Una breve reseña de su historia
+- Sus ventajas (y algunas posibles desventajas, para ser justos)
+- Por qué podemos aplicarla en JavaScript (que normalmente no se considera un lenguaje funcional)
+- Las herramientas que necesitaremos para avanzar en el resto de este libro
+
+## Próximo Capítulo
+
+En el Capítulo 2, "Pensando Funcionalmente - Un Primer Ejemplo", abordaremos:
+
+- Un problema simple como ejemplo
+- Diferentes enfoques comunes para resolverlo
+- Una solución desde la perspectiva funcional
+- Un análisis de las ventajas de nuestro método funcional
 
 
 [Haz clic aquí para ir al Capítulo 2](./../capitulo_2/ThinkingFunctionally-AFirstExample.md)
