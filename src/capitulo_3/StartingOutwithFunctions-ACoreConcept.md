@@ -1,3 +1,5 @@
+[Haz clic aquí para ir al Capítulo 2](./../capitulo_2/ThinkingFunctionally-AFirstExample.md)
+
 # Empezando con Funciones - Un Concepto Central Capítulo 3
 
 
@@ -265,3 +267,5 @@ fetch("some/remote/url")
 Nota que si hubieras definido las funciones apropiadas `processData(data)` y `processError(error)`, el código podría haberse acortado a `fetch("some/remote/url").then(processData).catch(processError)` siguiendo las líneas que vimos anteriormente.
 
 Finalmente, también deberías considerar usar `async/await`; lee más sobre esto en https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function y https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await.
+
+[meme](url(https://www.youtube.com/watch?v=dQw4w9WgXcQ))
