@@ -451,3 +451,5 @@ alt(); // B
 
 ## 2.3. ¡Todo tiene un límite! 
 Como una extensión de `once()`, ¿podrías escribir una función de orden superior, `thisManyTimes(fn, n)`, que permita llamar a la función `fn()` hasta `n` veces, pero luego no haga nada? Para dar un ejemplo, `once(fn)` y `thisManyTimes(fn, 1)` producirían funciones que se comportan de la misma manera.
+
+[Haz clic aquí para ir al Capítulo 3](./../capitulo_3/StartingOutwithFunctions-ACoreConcept.md)
