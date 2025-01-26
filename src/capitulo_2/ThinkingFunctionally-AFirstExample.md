@@ -280,7 +280,7 @@ squeakOnce("only once"); // sin salida
 
 Consulta los resultados en CodePen o mira la Figura 2.2:
 
-![Testing the solution manually](./img/TestingSolution.png)
+![Testing the solution manually](./img/TestingManually.png)
 
 Los pasos anteriores nos mostraron cómo podríamos probar nuestra función once() manualmente, pero el método que usamos no es exactamente ideal. Veamos por qué, y cómo mejorar, en la siguiente sección.
 
