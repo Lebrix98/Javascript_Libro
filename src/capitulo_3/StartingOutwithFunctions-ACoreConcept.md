@@ -273,3 +273,351 @@ Finalmente, también deberías considerar usar `async/await`; lee más sobre est
   <img src="./01.png" alt="Descripción de la imagen" width="850"/>
 </div>
 
+
+# Empezando con Funciones - Un Concepto Central Capítulo 3
+
+
+No estás limitado a pasar una única continuación. Al igual que con las promesas, puedes proporcionar dos o más callbacks alternativos. Y esto, por cierto, puede proporcionar una solución al problema de cómo trabajarías con excepciones. Si simplemente permitiéramos que una función lance un error, sería un retorno implícito al llamador, y no queremos esto. La solución a esto es proporcionar un callback alternativo (es decir, una continuación diferente) que se usará cada vez que se lance una excepción (en el Capítulo 12, *Construyendo Mejores Contenedores - Tipos de Datos Funcionales*, encontraremos otra solución usando mónadas):
+
+```javascript
+function doSomething(a, b, c, normalContinuation, errorContinuation) {
+  let r = 0;
+  // ... hacer algunos cálculos que involucren a, b y c,
+  // y almacenar el resultado en r
+  // si ocurre un error, invocar:
+  // errorContinuation("descripción del error")
+  // de lo contrario, invocar:
+  // normalContinuation(r)
+}
+```
+
+El uso de CPS (Continuation-Passing Style) incluso puede permitirte ir más allá de las estructuras de control que JavaScript proporciona, pero eso estaría más allá de los objetivos de este libro, así que te dejaré investigar eso por tu cuenta.
+
+## Polyfills
+
+Poder asignar funciones dinámicamente (de la misma manera que puedes asignar diferentes valores a una variable) también te permite trabajar de manera más eficiente al definir polyfills.
+
+### Detección de Ajax
+
+Retrocedamos un poco en el tiempo cuando Ajax comenzó a aparecer. Dado que diferentes navegadores implementaban llamadas Ajax de distintas maneras, siempre tenías que codificar alrededor de estas diferencias. El siguiente código muestra cómo implementarías una llamada Ajax probando varias condiciones diferentes:
+
+```javascript
+function getAjax() {
+  let ajax = null;
+  if (window.XMLHttpRequest) {
+    // ¿Navegador moderno? Usa XMLHttpRequest
+    ajax = new XMLHttpRequest();
+  } else if (window.ActiveXObject) {
+    // de lo contrario, usa ActiveX para IE5 e IE6
+    ajax = new ActiveXObject("Microsoft.XMLHTTP");
+  } else {
+    throw new Error("¡No hay soporte para Ajax!");
+  }
+  return ajax;
+}
+```
+
+Esto funcionó, pero implicaba que tendrías que rehacer la verificación de Ajax para cada llamada, aunque los resultados de la prueba nunca cambiarían. Hay una manera más eficiente de hacer esto, y tiene que ver con el uso de funciones como objetos de primera clase. Podríamos definir dos funciones diferentes, probar la condición solo una vez y luego asignar la función correcta para usarla más tarde; estudia el siguiente código para ver una alternativa:
+
+```javascript
+(function initializeGetAjax() {
+  let myAjax = null;
+  if (window.XMLHttpRequest) {
+    // ¿Navegadores modernos? Usa XMLHttpRequest
+    myAjax = function() {
+      return new XMLHttpRequest();
+    };
+  } else if (window.ActiveXObject) {
+    // Es ActiveX para IE5 e IE6
+    myAjax = function() {
+      new ActiveXObject("Microsoft.XMLHTTP");
+    };
+  } else {
+    myAjax = function() {
+      throw new Error("¡No hay soporte para Ajax!");
+    };
+  }
+  window.getAjax = myAjax;
+})();
+```
+
+Este fragmento de código muestra dos conceptos importantes. Primero, podemos asignar una función dinámicamente: cuando este código se ejecuta, `window.getAjax` (es decir, la variable global `getAjax`) obtendrá uno de los tres valores posibles según el navegador actual. Cuando más tarde llames a `getAjax()` en tu código, la función correcta se ejecutará sin que necesites hacer más pruebas de detección del navegador.
+
+La segunda idea interesante es que definimos la función `initializeGetAjax` y la ejecutamos inmediatamente; este patrón se llama **expresión de función inmediatamente invocada** (IIFE). La función se ejecuta, pero se limpia después de sí misma, porque todas sus variables son locales y ni siquiera existirán después de que la función se ejecute. Aprenderemos más sobre esto más adelante.
+
+# Empezando con Funciones - Un Concepto Central Capítulo 3
+
+
+## Añadiendo funciones faltantes
+
+Esta idea de definir una función sobre la marcha también nos permite escribir **polyfills** que proporcionan funciones que de otro modo faltarían. Por ejemplo, supongamos que tenemos algún código como el siguiente:
+
+```javascript
+if (currentName.indexOf("Mr.") !== -1) {
+  // es un hombre
+  ...
+}
+```
+
+En lugar de esto, podrías preferir usar la forma más nueva y clara, y simplemente escribir lo siguiente:
+
+```javascript
+if (currentName.includes("Mr.")) {
+  // es un hombre
+  ...
+}
+```
+
+¿Qué sucede si tu navegador no proporciona `.includes()`? Una vez más, podemos definir la función apropiada sobre la marcha, pero solo si es necesario. Si `.includes()` está disponible, no necesitas hacer nada, pero si falta, necesitas definir un polyfill que proporcionará el mismo funcionamiento. El siguiente código muestra un ejemplo de dicho polyfill:
+
+Puedes encontrar polyfills para muchas características modernas de JavaScript en el sitio de desarrolladores de Mozilla. Por ejemplo, el polyfill que usamos para `includes` fue tomado directamente de [https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/includes](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/includes).
+
+```javascript
+if (!String.prototype.includes) {
+  String.prototype.includes = function(search, start) {
+    "use strict";
+    if (typeof start !== "number") {
+      start = 0;
+    }
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}
+```
+
+Cuando este código se ejecuta, verifica si el prototipo de `String` ya tiene el método `includes`. Si no lo tiene, le asigna una función que hace el mismo trabajo, por lo que a partir de ese momento podrás usar `.includes()` sin preocupaciones adicionales. Por cierto, hay otras formas de definir un polyfill: consulta la respuesta a la pregunta 3.5 para una alternativa.
+
+Modificar directamente el prototipo de un tipo estándar generalmente es mal visto, porque en esencia es equivalente a usar una variable global y, por lo tanto, es propenso a errores; sin embargo, este caso (escribir un polyfill para una función bien establecida y conocida) es bastante poco probable que provoque conflictos.
+
+Finalmente, si pensaste que el ejemplo de Ajax mostrado anteriormente era anticuado, considera esto: si quieres usar la forma más moderna de llamar a servicios con `fetch()`, también encontrarás que no todos los navegadores modernos lo soportan (verifica [http://caniuse.com/#search=fetch](http://caniuse.com/#search=fetch) para confirmar esto), por lo que tendrás que usar un polyfill, como el que se encuentra en [https://github.com/github/fetch](https://github.com/github/fetch). Estudia el código y verás que básicamente usa el mismo método descrito anteriormente para ver si se necesita un polyfill y crearlo.
+
+## Stubbing
+
+Aquí veremos un caso de uso que es similar en algunos aspectos a usar un polyfill: hacer que una función haga un trabajo diferente dependiendo del entorno. La idea es realizar **stubbing**, una idea que proviene de las pruebas y que implica reemplazar una función con otra que hace un trabajo más simple, en lugar de hacer el trabajo real.
+
+El stubbing se usa comúnmente con funciones de registro. Es posible que desees que la aplicación realice un registro detallado cuando está en desarrollo, pero que no diga ni una palabra cuando está en producción. Una solución común sería escribir algo como lo siguiente:
+
+```javascript
+let myLog = someText => {
+  if (DEVELOPMENT) {
+    console.log(someText); // o alguna otra forma de registro
+  } else {
+    // no hacer nada
+  }
+}
+```
+
+Esto funciona, pero como en el ejemplo de la detección de Ajax, hace más trabajo del necesario porque verifica si la aplicación está en desarrollo cada vez.
+
+[ 68 ]
+
+Podríamos simplificar el código (¡y obtener una ganancia de rendimiento realmente pequeña!) si hacemos stubbing de la función de registro para que en realidad no registre nada; una implementación fácil es la siguiente:
+
+```javascript
+let myLog;
+if (DEVELOPMENT) {
+  myLog = someText => console.log(someText);
+} else {
+  myLog = someText => {};
+}
+```
+
+Incluso podemos hacerlo mejor con el operador ternario:
+
+```javascript
+const myLog = DEVELOPMENT
+  ? someText => console.log(someText)
+  : someText => {};
+```
+
+Esto es un poco más críptico, pero lo prefiero porque usa un `const`, que no se puede modificar.
+
+Dado que JavaScript nos permite llamar a funciones con más parámetros que argumentos, y dado que no estamos haciendo nada en `myLog()` cuando no estamos en desarrollo, también podríamos haber escrito `() => {}` y habría funcionado bien. Sin embargo, prefiero mantener la misma firma, y es por eso que especifiqué el argumento `someText`, incluso si no se usaría. ¡Tú decides!
+
+Notarás que estamos usando el concepto de funciones como objetos de primera clase una y otra vez; ¡mira todos los ejemplos de código y lo verás!
+
+## Invocación inmediata
+
+Hay otro uso común de las funciones, generalmente visto en bibliotecas y frameworks populares, que te permite traer algunas ventajas de modularidad de otros lenguajes a JavaScript (¡incluso en versiones más antiguas!). La forma habitual de escribir esto es algo como lo siguiente:
+
+```javascript
+(function() {
+  // hacer algo...
+})();
+```
+
+Otro estilo equivalente es `(function(){ ... }())`—nota la diferente ubicación de los paréntesis para la llamada a la función. Ambos estilos tienen sus seguidores; elige el que más te guste, pero síguelo consistentemente.
+
+[ 69 ]
+
+También puedes tener el mismo estilo, pero pasar algunos argumentos a la función que se usarán como valores iniciales para sus parámetros:
+
+```javascript
+(function(a, b) {
+  // hacer algo, usando los
+  // argumentos recibidos para a y b...
+})(some, values);
+```
+
+Finalmente, también podrías devolver algo desde la función:
+
+```javascript
+let x = (function(a, b) {
+  // ...devolver un objeto o función
+})(some, values);
+```
+
+Como mencionamos anteriormente, el patrón en sí se llama **IIFE** (pronunciado "iffy"). El nombre es fácil de entender: estás definiendo una función y llamándola de inmediato, por lo que se ejecuta en el acto. ¿Por qué harías esto, en lugar de simplemente escribir el código en línea? La razón tiene que ver con los ámbitos.
+
+Nota los paréntesis alrededor de la función. Estos ayudan al analizador a entender que estamos escribiendo una expresión. Si omitieras el primer conjunto de paréntesis, JavaScript pensaría que estás escribiendo una declaración de función en lugar de una invocación. Los paréntesis también sirven como una nota visual, por lo que los lectores de tu código reconocerán inmediatamente la IIFE.
+
+Si defines cualquier variable o función dentro de la IIFE, debido a cómo JavaScript define el alcance de las funciones, esas definiciones serán internas, y ninguna otra parte de tu código podrá acceder a ellas. Imagina que querías escribir alguna inicialización complicada, como la siguiente:
+
+```javascript
+function ready() { ... }
+function set() { ... }
+function go() { ... }
+// inicializar cosas llamando a ready(),
+// set() y go() apropiadamente
+```
+
+¿Qué podría salir mal? El problema radica en el hecho de que podrías (por accidente) tener una función con el mismo nombre que cualquiera de las tres aquí, y el hoisting implicaría que se llamaría a la última función:
+
+```javascript
+function ready() {
+  console.log("ready");
+}
+function set() {
+  console.log("set");
+}
+function go() {
+  console.log("go");
+}
+ready();
+set();
+go();
+function set() {
+  console.log("INESPERADO...");
+}
+// "ready"
+// "INESPERADO"
+// "go"
+```
+
+¡Ups! Si hubieras usado una IIFE, el problema no habría ocurrido. Además, las tres funciones internas ni siquieran serían visibles para el resto del código, lo que ayuda a mantener el espacio de nombres global menos contaminado. El siguiente código muestra un patrón muy común para esto:
+
+```javascript
+(function() {
+  function ready() {
+    console.log("ready");
+  }
+  function set() {
+    console.log("set");
+  }
+  function go() {
+    console.log("go");
+  }
+  ready();
+  set();
+  go();
+})();
+function set() {
+  console.log("INESPERADO...");
+}
+```
+
+# Empezando con Funciones - Un Concepto Central Capítulo 3
+
+
+¡Ups! Si hubieras usado una IIFE, el problema no habría ocurrido. Además, las tres funciones internas ni siquiera serían visibles para el resto del código, lo que ayuda a mantener el espacio de nombres global menos contaminado. El siguiente código muestra un patrón muy común para esto:
+
+```javascript
+(function() {
+  function ready() {
+    console.log("ready");
+  }
+  function set() {
+    console.log("set");
+  }
+  function go() {
+    console.log("go");
+  }
+  ready();
+  set();
+  go();
+})();
+function set() {
+  console.log("INESPERADO...");
+}
+// "ready"
+// "set"
+// "go"
+```
+
+Para ver un ejemplo que involucra valores devueltos, podríamos revisar el ejemplo del Capítulo 1, *Volviéndose Funcional - Varias Preguntas*, y escribir lo siguiente, lo que crearía un solo contador:
+
+```javascript
+const myCounter = (function() {
+  let count = 0;
+  return function() {
+    count++;
+    return count;
+  };
+})();
+```
+
+Luego, cada llamada a `myCounter()` devolvería un conteo incrementado, pero no hay posibilidad de que ninguna otra parte de tu código sobrescriba la variable interna `count` porque solo es accesible dentro de la función devuelta.
+
+## Resumen
+
+En este capítulo, repasamos varias formas de definir funciones en JavaScript, centrándonos principalmente en las funciones de flecha, que tienen varias ventajas sobre las funciones estándar, incluida ser más concisas. Aprendimos sobre el concepto de currying (que revisaremos más adelante), consideramos algunos aspectos de las funciones como objetos de primera clase y, finalmente, consideramos varias técnicas que resultan ser completamente FP en concepto. ¡Ten la seguridad de que usaremos todo en este capítulo como los bloques de construcción para técnicas más avanzadas en el resto del libro; solo espera y verás!
+
+En el Capítulo 4, *Comportándose Correctamente - Funciones Puras*, profundizaremos aún más en las funciones y aprenderemos sobre el concepto de funciones puras, lo que nos llevará a un estilo de programación aún mejor.
+
+## Preguntas
+
+### 3.1 ¿Objeto no inicializado?
+
+Los programadores de React-Redux suelen codificar creadores de acciones para simplificar la creación de acciones que luego serán procesadas por un reducer. Las acciones son objetos, que deben incluir un atributo `type` que se usa para determinar qué tipo de acción estás despachando. El siguiente código supuestamente hace esto, pero ¿puedes explicar los resultados inesperados?
+
+```javascript
+const simpleAction = t => {
+  type: t;
+};
+console.log(simpleAction("INITIALIZE"));
+// undefined
+```
+
+### 3.2 ¿Se permiten flechas?
+
+¿Sería todo igual si definieras `listArguments()` y `listArguments2()` de la sección *Trabajando con argumentos* usando funciones de flecha en lugar de la forma en que lo hicimos, con la palabra clave `function`?
+
+### 3.3 Una sola línea
+
+Algunos programadores, particularmente ahorrativos con las líneas de código, sugirieron reescribir `doAction2()` como una sola línea, ¡aunque no se puede decir esto por el formato! ¿Qué piensas: es correcto o no?
+
+```javascript
+const doAction3 = (state = initialState, action) =>
+  (dispatchTable[action.type] &&
+    dispatchTable[action.type](state, action)) ||
+  state;
+```
+
+### 3.4 ¡Encuentra el error!
+
+Un programador, trabajando con una tienda global para el estado (similar en concepto a las de Redux, Mobx, Vuex y otras usadas por diferentes frameworks web), quería registrar (con fines de depuración) todas las llamadas al método `set()` de la tienda. Después de crear el nuevo objeto de la tienda, escribió lo siguiente para que los argumentos de `store.set()` se registraran antes de ser procesados. Desafortunadamente, el código no funcionó como se esperaba. ¿Cuál es el problema? ¿Puedes encontrar el error?
+
+```javascript
+window.store = new Store();
+const oldSet = window.store.set;
+window.store.set = (...data) => (console.log(...data), oldSet(...data));
+```
+
+### 3.5 Enlace sin `bind`
+
+Supongamos que `bind()` no estuviera disponible; ¿cómo podrías hacer un polyfill para él?
+
+
