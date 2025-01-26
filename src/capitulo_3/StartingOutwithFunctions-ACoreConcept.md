@@ -1,3 +1,5 @@
+[Haz clic aquí para ir al Capítulo 2](./../capitulo_2/ThinkingFunctionally-AFirstExample.md)
+
 # Empezando con Funciones - Un Concepto Central Capítulo 3
 
 
@@ -266,7 +268,11 @@ Nota que si hubieras definido las funciones apropiadas `processData(data)` y `pr
 
 Finalmente, también deberías considerar usar `async/await`; lee más sobre esto en https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function y https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await.
 
+<<<<<<< HEAD
 
 <div align="center">
   <img src="./01.png" alt="Descripción de la imagen" width="800"/>
 </div>
+=======
+[meme](https://www.youtube.com/watch?v=dQw4w9WgXcQ))
+>>>>>>> 29765b970dae1413bc48c6ed3acd960a6dcdd11f
