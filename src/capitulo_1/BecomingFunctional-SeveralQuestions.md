@@ -205,7 +205,7 @@ Los closures son una forma de implementar el ocultamiento de datos (con variable
 
 ```javascript
 function newCounter() {
-   let count = 0;
+   let count = 0; // ambito lexico
    return function() {
        count++;
        return count;
@@ -217,6 +217,48 @@ console.log(nc()); // 1
 console.log(nc()); // 2
 console.log(nc()); // 3
 ```
+
+> *Documentación de Closures y Callbacks en JavaScript*
+> 
+> *Un closure es una función que mantiene acceso a variables de su scope exterior incluso después de que la función que la contiene haya terminado de ejecutarse. Los closures son fundamentales para la encapsulación de datos y la creación de funciones con estado.*
+>
+> *Ejemplo de un closure:*
+> ```javascript
+> function crearGestorCarrito() {
+>     let items = [];
+>     let descuentoActivo = null;
+>     
+>     return {
+>         agregarProducto: function(producto) {
+>             items.push({
+>                 id: producto.id,
+>                 nombre: producto.nombre,
+>                 precio: producto.precio,
+>                 cantidad: 1
+>             });
+>         },
+>         calcularTotal: function() {
+>             return items.reduce((total, item) => 
+>                 total + (item.precio * item.cantidad), 0);
+>         }
+>     };
+> }
+> ```
+>
+> *Un callback, por otro lado, es una función que se pasa como argumento a otra función para ser ejecutada en un momento posterior. Los callbacks son esenciales para manejar operaciones asíncronas.*
+>
+> *Ejemplo de un callback:*
+> ```javascript
+> function descargarDatos(callback) {
+>     setTimeout(() => {
+>         const datos = { usuario: 'Juan' };
+>         callback(datos);
+>     }, 1000);
+> }
+> ```
+
+
+
 
 
 [Haz clic aquí para ir al Capítulo 2](./../capitulo_2/ThinkingFunctionally-AFirstExample.md)
