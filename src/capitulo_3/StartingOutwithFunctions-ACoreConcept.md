@@ -2,7 +2,6 @@
 
 # Empezando con Funciones - Un Concepto Central Capítulo 3
 
-
 El punto que queremos destacar es que una función puede ser asignada a una variable y también puede ser reasignada si se desea. De manera similar, podemos definir funciones en el momento en que se necesitan. Incluso podemos hacer esto sin nombrarlas: al igual que con las expresiones comunes, si se usan solo una vez, entonces no es necesario nombrarlas ni almacenarlas en una variable.
 
 ## Un reducer de React-Redux
@@ -53,7 +52,7 @@ const dispatchTable = {
     // actualizar un elemento,
     // y generar un estado actualizado
     return newState;
-  }
+  },
 };
 ```
 
@@ -76,7 +75,7 @@ Analicémoslo: dada la acción, si `action.type` coincide con un atributo en el 
 Sin embargo, hay un error común (aunque de hecho, inofensivo) que suele cometerse. A menudo se ve código como este:
 
 ```javascript
-fetch("some/remote/url").then(function(data) {
+fetch("some/remote/url").then(function (data) {
   processResult(data);
 });
 ```
@@ -110,7 +109,7 @@ Los usuarios de Unix/Linux ya pueden estar acostumbrados a este estilo, porque t
 Sin embargo, hay un caso del que debes estar consciente: ¿qué sucede si estás llamando a un método de un objeto? Mira el siguiente código:
 
 ```javascript
-fetch("some/remote/url").then(function(data) {
+fetch("some/remote/url").then(function (data) {
   myObject.store(data);
 });
 ```
@@ -163,15 +162,7 @@ Luego, veremos en detalle el uso de funciones de manera FP considerando varias t
 El primer ejemplo de pasar funciones como parámetros es proporcionado por el método `Array.prototype.sort()`. Si tienes un array de cadenas y quieres ordenarlo, puedes simplemente usar el método `sort()`. Por ejemplo, para ordenar alfabéticamente un array con los colores del arcoíris, escribiríamos algo como lo siguiente:
 
 ```javascript
-var colors = [
-  "violet",
-  "indigo",
-  "blue",
-  "green",
-  "yellow",
-  "orange",
-  "red"
-];
+var colors = ["violet", "indigo", "blue", "green", "yellow", "orange", "red"];
 colors.sort();
 console.log(colors);
 // ["blue", "green", "indigo", "orange", "red", "violet", "yellow"]
@@ -256,10 +247,10 @@ Una mejor manera es usar promesas; lee más en https://developer.mozilla.org/en-
 
 ```javascript
 fetch("some/remote/url")
-  .then(data => {
+  .then((data) => {
     // Hacer algún trabajo con los datos devueltos
   })
-  .catch(error => {
+  .catch((error) => {
     // Procesar todos los errores aquí
   });
 ```
@@ -268,4 +259,4 @@ Nota que si hubieras definido las funciones apropiadas `processData(data)` y `pr
 
 Finalmente, también deberías considerar usar `async/await`; lee más sobre esto en https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function y https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await.
 
-[meme](https://www.youtube.com/watch?v=dQw4w9WgXcQ))
+[Haz clic aquí para ir al Capítulo 4](./../capitulo_4/Behaving_Properly-Pure_Functions.md)
