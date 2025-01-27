@@ -259,4 +259,4 @@ Nota que si hubieras definido las funciones apropiadas `processData(data)` y `pr
 
 Finalmente, también deberías considerar usar `async/await`; lee más sobre esto en https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function y https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await.
 
-[meme](https://www.youtube.com/watch?v=dQw4w9WgXcQ))
+[Haz clic aquí para ir al Capítulo 4](./../capitulo_4/Behaving_Properly-Pure_Functions.md)
