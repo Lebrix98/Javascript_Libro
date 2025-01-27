@@ -246,7 +246,7 @@ Vamos a repasar algunos de los puntos más finos de esta función:
 
 Entonces, ¿cómo lo usaríamos? Ni siquiera necesitamos almacenar la nueva función generada en ningún lugar. Simplemente podemos escribir el método onclick, como se muestra a continuación:
 
-```javascript
+```html
 <button id="billButton" onclick="once(billTheUser)(some, sales, data)">
   Facturarme
 </button>
